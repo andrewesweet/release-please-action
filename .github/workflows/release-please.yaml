@@ -1,7 +1,5 @@
 on:
   push:
-    branches:
-      - main
 name: release-please
 env:
   ACTION_NAME: release-please-action
@@ -20,7 +18,7 @@ jobs:
         # get current commit hash
         CURRENT_HASH=$(git rev-parse HEAD)
         # get last commit hash of last build dist
-        LAST_BUILD_HASH=$(git log --author=google-github-actions-bot -1 --pretty=format:"%H")
+        LAST_BUILD_HASH=$(git log --author=andrewesweet-bot -1 --pretty=format:"%H")
         DIFF=""
         # build and commit dist if diff
         git config --global user.name "actions-bot"
@@ -44,7 +42,7 @@ jobs:
     - name: Create PR with dist
       uses: peter-evans/create-pull-request@v3
       with:
-        token: ${{ secrets.ACTIONS_BOT_TOKEN }}
+        token: ${{ secrets.GITHUB_TOKEN }}
         commit-message: Build dist
         author: "actions-bot <github-actions-bot@google.com>"
         title: "chore: build dist"
@@ -54,24 +52,24 @@ jobs:
         labels: automated pr
         branch: create-pull-request/build-dist
         delete-branch: true
-        push-to-fork: google-github-actions-bot/${{env.ACTION_NAME}}
   release-please-release:
     runs-on: ubuntu-latest
     needs: [build]
     steps:
-      - uses: GoogleCloudPlatform/release-please-action@main
+      - uses: andrewesweet/release-please-action@github-changelog-type
         id: release
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           release-type: node
           package-name: ${{env.ACTION_NAME}}
           command: github-release
+          changelog-notes-type: github
       - uses: actions/checkout@v2
       - name: tag major and patch versions
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git remote add gh-token "https://${{ secrets.GITHUB_TOKEN}}@github.com/google-github-actions/release-please-action.git"
+          git remote add gh-token "https://${{ secrets.GITHUB_TOKEN}}@github.com/andrewesweet/release-please-action.git"
           git tag -d v${{ steps.release.outputs.major }} || true
           git tag -d v${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }} || true
           git push origin :v${{ steps.release.outputs.major }} || true
@@ -88,13 +86,14 @@ jobs:
       - release-please-release
     steps:
       - id: release-pr
-        uses: GoogleCloudPlatform/release-please-action@main
+        uses: andrewesweet/release-please-action@github-changelog-type
         with:
-          token: ${{ secrets.ACTIONS_BOT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           release-type: node
           fork: true
           package-name: ${{env.ACTION_NAME}}
           command: release-pr
+          changelog-notes-type: github
       - id: label
         if: ${{ steps.release-pr.outputs.pr }}
         uses: actions/github-script@v3

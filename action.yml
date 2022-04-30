@@ -96,6 +96,10 @@ inputs:
     description: 'mark pull request as a draft'
     required: false
     default: false
+  changelog-notes-type:
+    description: "configures the changelog notes builder (see https://github.com/googleapis/release-please/blob/main/docs/customizing.md#changelog-types), defaults to release-please's implementation"
+    required: false
+    default: 'default'
 
 runs:
   using: 'node12'

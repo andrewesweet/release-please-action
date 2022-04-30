@@ -120,6 +120,7 @@ async function manifestInstance (github) {
   const pullRequestTitlePattern = core.getInput('pull-request-title-pattern') || undefined
   const draft = core.getBooleanInput('draft')
   const draftPullRequest = core.getBooleanInput('draft-pull-request')
+  const changelogNotesType = core.getInput('changelog-notes-type') || undefined
   return await Manifest.fromConfig(
     github,
     github.repository.defaultBranch,
@@ -134,7 +135,8 @@ async function manifestInstance (github) {
       extraFiles,
       includeComponentInTag: monorepoTags,
       pullRequestTitlePattern,
-      draftPullRequest
+      draftPullRequest,
+      changelogNotesType
     },
     {
       draft,
