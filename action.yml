@@ -101,6 +101,7 @@ inputs:
     required: false
   changelog-host:
     description: 'Host for commit hyperlinks in the changelog. Default `https://github.com`'
+    required: false
   versioning-strategy:
     description: 'Override method of determining SemVer version bumps based on commits (drr https://github.com/googleapis/release-please/blob/main/docs/customizing.md#versioning-strategies). Default `default`'
     required: false
